@@ -384,6 +384,12 @@ function Detail({id, lectures, records, settings, onBack, onMark}) {
           </div>
         ))}
     </div>
+    <div style={{padding:'16px 20px 0'}}>
+      <button onClick={()=>location.href=`lecture.html?id=${id}&mode=edit`}
+        style={{width:'100%',border:'1px solid #111',padding:'11px 0',fontFamily:'JetBrains Mono',fontSize:10,letterSpacing:2,textTransform:'uppercase',background:'transparent',cursor:'pointer'}}>
+        ✎ Edit this lecture
+      </button>
+    </div>
     <div style={{height:40}}/>
   </>);
 }

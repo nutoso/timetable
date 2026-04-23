@@ -146,7 +146,12 @@ function processLectureImport(raw) {
     return processTimetableFormat(raw);
   }
 
-  // 形式B: 配列 or { lectures: [...] }（独自エクスポート形式）
+  // 形式B: アプリ独自バックアップ形式 { version:1, lectures, records, settings }
+  if (raw.version === 1 && Array.isArray(raw.lectures)) {
+    return applyFullRestore(raw);
+  }
+
+  // 形式C: 配列 or { lectures: [...] }（講義のみ）
   const list = Array.isArray(raw)
     ? raw
     : Array.isArray(raw?.lectures)
@@ -180,6 +185,26 @@ function processLectureImport(raw) {
     totalClasses: Number(l.totalClasses) || 15,
     memo:         String(l.memo         ?? '').trim(),
   })));
+}
+
+/* ---- アプリ独自バックアップの完全復元 ---- */
+function applyFullRestore(raw) {
+  const ok = confirm(
+    `バックアップを復元します。\n\n` +
+    `講義: ${raw.lectures.length}件\n` +
+    `出席記録: ${(raw.records || []).length}件\n\n` +
+    `現在のデータはすべて上書きされます。続けますか？`
+  );
+  if (!ok) return;
+
+  save(KEYS.LECTURES, raw.lectures);
+  if (Array.isArray(raw.records))  save(KEYS.RECORDS,  raw.records);
+  if (raw.settings && typeof raw.settings === 'object') {
+    save(KEYS.SETTINGS, { ...DEFAULT_SETTINGS, ...raw.settings });
+  }
+
+  showToast('バックアップを復元しました');
+  setTimeout(() => navigate('index.html'), 1500);
 }
 
 /* ---- 時間割PDF形式のインポート処理 ---- */

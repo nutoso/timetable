@@ -1,0 +1,323 @@
+:root {
+  /* ===== Typography ===== */
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-mono:    ui-monospace, 'Menlo', 'Courier New', monospace;
+  --font-family:  -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+
+  /* ===== Midnight Study Palette ===== */
+  --color-bg:        #0D1117;
+  --color-surface:   #161B24;
+  --color-surface-2: #1C2333;
+  --color-border:    #252F3E;
+  --color-border-hi: rgba(212, 160, 23, 0.18);
+
+  /* Text */
+  --color-text-primary:   #E6EDF3;
+  --color-text-secondary: #9DAAB7;
+  --color-text-muted:     #7A8898;  /* was #4E5C6E — コントラスト2.4 → 5.2に改善 */
+
+  /* Primary — warm gold */
+  --color-primary:       #D4A017;
+  --color-primary-light: rgba(212, 160, 23, 0.10);
+
+  /* Accent — amber */
+  --color-accent: #E8A020;
+
+  /* Status: 出席 — sage green */
+  --color-attend-bg:   rgba(52, 168, 83, 0.14);
+  --color-attend-text: #4DB870;
+  --color-attend-main: #34A853;
+
+  /* Status: 欠席 — warm red */
+  --color-absent-bg:   rgba(220, 80, 80, 0.14);
+  --color-absent-text: #E05A5A;
+  --color-absent-main: #DC5050;
+
+  /* Status: 未記録 */
+  --color-unrecorded-bg:   rgba(176, 186, 197, 0.07);
+  --color-unrecorded-text: #9DAAB7;
+
+  /* ===== Type Scale ===== */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   16px;
+  --text-lg:   18px;
+  --text-xl:   20px;
+  --text-2xl:  26px;
+  --font-regular: 400;
+  --font-medium:  500;
+  --font-bold:    700;
+
+  /* ===== Spacing ===== */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ===== Radii ===== */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* ===== Shadows ===== */
+  --shadow-card:     0 1px 0 rgba(255,255,255,0.03), 0 4px 20px rgba(0,0,0,0.35);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.55);
+  --shadow-toast:    0 16px 48px rgba(0,0,0,0.65);
+  --shadow-gold:     0 0 24px rgba(212,160,23,0.25);
+
+  /* ===== Glass / FAB ===== */
+  --color-glass-bg:  rgba(13, 17, 23, 0.88);
+  --color-fab-text:  #0D1117;
+
+  /* ===== Layout ===== */
+  --header-height:    68px;
+  --bottom-nav-height: 60px;
+  --tab-height:       48px;
+}
+
+/* =============================================
+   Theme: 桜の朝 (Sakura Dawn)
+   ============================================= */
+html[data-theme="sakura"] {
+  --color-bg:        #FDF0F4;
+  --color-surface:   #FFFFFF;
+  --color-surface-2: #FAE8EF;
+  --color-border:    #EDD5DE;
+  --color-border-hi: rgba(194, 105, 143, 0.22);
+
+  --color-text-primary:   #2D1F26;
+  --color-text-secondary: #7A5C65;
+  --color-text-muted:     #B898A4;
+
+  --color-primary:       #C2698F;
+  --color-primary-light: rgba(194, 105, 143, 0.10);
+  --color-accent:        #E8956D;
+
+  --color-attend-bg:   rgba(59, 150, 110, 0.12);
+  --color-attend-text: #2E7D5E;
+  --color-attend-main: #3A9A6F;
+
+  --color-absent-bg:   rgba(210, 60, 90, 0.12);
+  --color-absent-text: #B83050;
+  --color-absent-main: #D03560;
+
+  --color-unrecorded-bg:   rgba(122, 92, 101, 0.08);
+  --color-unrecorded-text: #9A7A85;
+
+  --shadow-card:     0 1px 4px rgba(194,105,143,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.12);
+  --shadow-toast:    0 16px 48px rgba(0,0,0,0.16);
+  --shadow-gold:     0 0 24px rgba(194,105,143,0.28);
+
+  --color-glass-bg:  rgba(253, 240, 244, 0.90);
+  --color-fab-text:  #FFFFFF;
+}
+
+/* =============================================
+   Theme: 設計図 (Blueprint)
+   ============================================= */
+html[data-theme="blueprint"] {
+  --color-bg:        #060E1A;
+  --color-surface:   #0B1725;
+  --color-surface-2: #0F1F30;
+  --color-border:    #152436;
+  --color-border-hi: rgba(0, 210, 255, 0.20);
+
+  --color-text-primary:   #C8E6FF;
+  --color-text-secondary: #6AAED4;  /* was #5A9AC0 — やや明るく */
+  --color-text-muted:     #5A90B5;  /* was #2E5470 — コントラスト比4.5に改善 */
+
+  --color-primary:       #00D2FF;
+  --color-primary-light: rgba(0, 210, 255, 0.10);
+  --color-accent:        #00FFB3;
+
+  --color-attend-bg:   rgba(0, 220, 140, 0.12);
+  --color-attend-text: #00CC88;
+  --color-attend-main: #00BB80;
+
+  --color-absent-bg:   rgba(255, 60, 60, 0.13);
+  --color-absent-text: #FF5555;
+  --color-absent-main: #FF3C3C;
+
+  --color-unrecorded-bg:   rgba(90, 154, 192, 0.08);
+  --color-unrecorded-text: #5A9AC0;
+
+  --shadow-card:     0 1px 0 rgba(0,210,255,0.05), 0 4px 20px rgba(0,0,0,0.40);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.60);
+  --shadow-toast:    0 16px 48px rgba(0,0,0,0.70);
+  --shadow-gold:     0 0 28px rgba(0,210,255,0.35);
+
+  --color-glass-bg:  rgba(6, 14, 26, 0.88);
+  --color-fab-text:  #060E1A;
+}
+
+/* =============================================
+   Theme: 和紙 (Washi)
+   ============================================= */
+html[data-theme="washi"] {
+  --color-bg:        #F0E9DC;
+  --color-surface:   #FAF6EF;
+  --color-surface-2: #E8DFD0;
+  --color-border:    #C5B49A;
+  --color-border-hi: rgba(44, 63, 122, 0.16);
+
+  --color-text-primary:   #1A1208;
+  --color-text-secondary: #5C4D3C;
+  --color-text-muted:     #9E8E7A;
+
+  --color-primary:       #2C3F7A;
+  --color-primary-light: rgba(44, 63, 122, 0.08);
+  --color-accent:        #C0392B;
+
+  --color-attend-bg:   rgba(59, 122, 87, 0.13);
+  --color-attend-text: #2D6B48;
+  --color-attend-main: #3B7A57;
+
+  --color-absent-bg:   rgba(192, 57, 43, 0.13);
+  --color-absent-text: #A02E22;
+  --color-absent-main: #C0392B;
+
+  --color-unrecorded-bg:   rgba(92, 77, 60, 0.08);
+  --color-unrecorded-text: #7A6A58;
+
+  --shadow-card:     0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.09);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.15);
+  --shadow-toast:    0 16px 48px rgba(0,0,0,0.20);
+  --shadow-gold:     0 0 24px rgba(44,63,122,0.22);
+
+  --color-glass-bg:  rgba(240, 233, 220, 0.92);
+  --color-fab-text:  #FFFFFF;
+}
+
+/* =============================================
+   Theme: 螢光 (Keikō — Fluorescent)
+   ピュアブラック × アシッドグリーン
+   ============================================= */
+html[data-theme="keiko"] {
+  --color-bg:        #080808;
+  --color-surface:   #111111;
+  --color-surface-2: #181818;
+  --color-border:    #2A2A2A;
+  --color-border-hi: rgba(204, 255, 0, 0.22);
+
+  --color-text-primary:   #EEFFCC;
+  --color-text-secondary: #AACC55;  /* was #88AA44 — 暗すぎて読めなかった */
+  --color-text-muted:     #7A9B2C;  /* was #445522 — コントラスト比1.5 → 5.5に改善 */
+
+  --color-primary:       #CCFF00;
+  --color-primary-light: rgba(204, 255, 0, 0.08);
+  --color-accent:        #AAFF00;
+
+  --color-attend-bg:   rgba(204, 255, 0, 0.10);
+  --color-attend-text: #BBEE22;
+  --color-attend-main: #CCFF00;
+
+  --color-absent-bg:   rgba(255, 60, 0, 0.14);
+  --color-absent-text: #FF6644;
+  --color-absent-main: #FF3300;
+
+  --color-unrecorded-bg:   rgba(80, 100, 40, 0.15);
+  --color-unrecorded-text: #8BAA38;  /* was #667744 — 暗すぎ */
+
+  --shadow-card:     0 1px 0 rgba(204,255,0,0.04), 0 4px 20px rgba(0,0,0,0.60);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.75);
+  --shadow-toast:    0 16px 48px rgba(0,0,0,0.85);
+  --shadow-gold:     0 0 32px rgba(204,255,0,0.30);
+
+  --color-glass-bg:  rgba(8, 8, 8, 0.92);
+  --color-fab-text:  #080808;
+}
+
+/* =============================================
+   Theme: 紙面 (Shinmen — Editorial Paper)
+   温かい紙色 × 墨 × 朱  |  Playfair × 船橋明朝 × JetBrains Mono
+   ============================================= */
+html[data-theme="shinmen"] {
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono:    'JetBrains Mono', 'Menlo', 'Courier New', monospace;
+  --font-family:  'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+
+  --color-bg:        #f3efe7;
+  --color-surface:   #faf8f3;
+  --color-surface-2: #ede8df;
+  --color-border:    #b8ae9e;
+  --color-border-hi: rgba(210, 52, 30, 0.18);
+
+  --color-text-primary:   #111111;
+  --color-text-secondary: #4a4540;
+  --color-text-muted:     #8a8478;
+
+  --color-primary:       #d2341e;
+  --color-primary-light: rgba(210, 52, 30, 0.08);
+  --color-accent:        #c0881a;
+
+  --color-attend-bg:   rgba(42, 122, 70, 0.12);
+  --color-attend-text: #1e6835;
+  --color-attend-main: #2a7a46;
+
+  --color-absent-bg:   rgba(210, 52, 30, 0.11);
+  --color-absent-text: #a82518;
+  --color-absent-main: #d2341e;
+
+  --color-unrecorded-bg:   rgba(138, 132, 120, 0.10);
+  --color-unrecorded-text: #8a8478;
+
+  --radius-sm:   0px;
+  --radius-md:   0px;
+  --radius-lg:   0px;
+  --radius-full: 2px;
+
+  --shadow-card:     0 1px 0 rgba(0,0,0,0.04), inset 0 0 0 1px rgba(0,0,0,0.07);
+  --shadow-elevated: 3px 3px 0 rgba(0,0,0,0.12);
+  --shadow-toast:    3px 3px 0 #d2341e;
+  --shadow-gold:     3px 3px 0 #d2341e;
+
+  --color-glass-bg:  rgba(243, 239, 231, 0.96);
+  --color-fab-text:  #f3efe7;
+}
+
+/* =============================================
+   Theme: 余白 (Yohaku — Whitespace)
+   オフホワイト × チャコール × インディゴ
+   ============================================= */
+html[data-theme="yohaku"] {
+  --color-bg:        #F5F4F1;
+  --color-surface:   #FFFFFF;
+  --color-surface-2: #EDEDEA;
+  --color-border:    #DDDBD6;
+  --color-border-hi: rgba(67, 56, 202, 0.14);
+
+  --color-text-primary:   #111110;
+  --color-text-secondary: #4A4A47;
+  --color-text-muted:     #A8A8A3;
+
+  --color-primary:       #4338CA;
+  --color-primary-light: rgba(67, 56, 202, 0.08);
+  --color-accent:        #6366F1;
+
+  --color-attend-bg:   rgba(22, 163, 74, 0.10);
+  --color-attend-text: #166534;
+  --color-attend-main: #16A34A;
+
+  --color-absent-bg:   rgba(220, 38, 38, 0.10);
+  --color-absent-text: #991B1B;
+  --color-absent-main: #DC2626;
+
+  --color-unrecorded-bg:   rgba(74, 74, 71, 0.07);
+  --color-unrecorded-text: #6B6B67;
+
+  --shadow-card:     0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.07);
+  --shadow-elevated: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-toast:    0 16px 40px rgba(0,0,0,0.16);
+  --shadow-gold:     0 0 20px rgba(67,56,202,0.20);
+
+  --color-glass-bg:  rgba(245, 244, 241, 0.92);
+  --color-fab-text:  #FFFFFF;
+}

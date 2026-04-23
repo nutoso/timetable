@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0D1117">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="時間割">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>設定</title>
+  <link rel="stylesheet" href="css/variables.css?v=7">
+  <link rel="stylesheet" href="css/base.css?v=5">
+  <link rel="stylesheet" href="css/components.css?v=6">
+  <link rel="stylesheet" href="css/pages.css?v=2">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <h1 class="header-title">設定</h1>
+  </header>
+
+  <!-- コンテンツ -->
+  <main class="page-content">
+    <div class="settings-section">
+
+      <!-- テーマ -->
+      <div class="settings-group">
+        <div class="settings-group-title">テーマ</div>
+        <div class="theme-picker">
+          <button class="theme-swatch" data-theme="midnight">
+            <div class="swatch-preview" style="--sw-bg:#0D1117;--sw-dot:#D4A017"></div>
+            <span>深夜書斎</span>
+          </button>
+          <button class="theme-swatch" data-theme="sakura">
+            <div class="swatch-preview" style="--sw-bg:#FDF0F4;--sw-dot:#C2698F"></div>
+            <span>桜の朝</span>
+          </button>
+          <button class="theme-swatch" data-theme="blueprint">
+            <div class="swatch-preview" style="--sw-bg:#060E1A;--sw-dot:#00D2FF"></div>
+            <span>設計図</span>
+          </button>
+          <button class="theme-swatch" data-theme="washi">
+            <div class="swatch-preview" style="--sw-bg:#F0E9DC;--sw-dot:#2C3F7A"></div>
+            <span>和紙</span>
+          </button>
+          <button class="theme-swatch" data-theme="keiko">
+            <div class="swatch-preview" style="--sw-bg:#080808;--sw-dot:#CCFF00"></div>
+            <span>螢光</span>
+          </button>
+          <button class="theme-swatch" data-theme="yohaku">
+            <div class="swatch-preview" style="--sw-bg:#F5F4F1;--sw-dot:#4338CA"></div>
+            <span>余白</span>
+          </button>
+          <button class="theme-swatch" data-theme="shinmen">
+            <div class="swatch-preview" style="--sw-bg:#f3efe7;--sw-dot:#d2341e"></div>
+            <span>紙面</span>
+          </button>
+          <button class="theme-swatch" data-theme="flyer">
+            <div class="swatch-preview" style="--sw-bg:#ece4d3;--sw-dot:#ff4d2e"></div>
+            <span>フライヤー</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 表示設定 -->
+      <div class="settings-group">
+        <div class="settings-group-title">表示</div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">表示曜日</span>
+          <select class="settings-item-select" id="s-display-days">
+            <option value="weekday">月〜金</option>
+            <option value="sat">月〜土</option>
+            <option value="sun">月〜日</option>
+          </select>
+        </div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">学年</span>
+          <select class="settings-item-select" id="s-grade">
+            <option value="1">1年生</option>
+            <option value="2">2年生</option>
+            <option value="3">3年生</option>
+            <option value="4">4年生</option>
+            <option value="5">5年生</option>
+            <option value="6">6年生</option>
+          </select>
+        </div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">学期</span>
+          <select class="settings-item-select" id="s-semester">
+            <option value="前期">前期</option>
+            <option value="後期">後期</option>
+          </select>
+        </div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">授業開始日</span>
+          <input type="date" class="settings-item-select" id="s-start-date" style="font-size:13px;padding:4px 6px">
+        </div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">時限数</span>
+          <select class="settings-item-select" id="s-periods-count">
+            <option value="4">4限</option>
+            <option value="5">5限</option>
+            <option value="6">6限</option>
+            <option value="7">7限</option>
+            <option value="8">8限</option>
+          </select>
+        </div>
+
+        <!-- 時限別時刻（コンパクトグリッド） -->
+        <div class="settings-period-block">
+          <div class="settings-period-cols">
+            <span></span><span>開始</span><span>終了</span>
+          </div>
+          <div id="period-times-grid"></div>
+        </div>
+      </div>
+
+      <!-- 操作設定 -->
+      <div class="settings-group">
+        <div class="settings-group-title">操作</div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">スワイプで記録</span>
+          <label class="toggle">
+            <input type="checkbox" id="s-gesture">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">ダブルタップで出席</span>
+          <label class="toggle">
+            <input type="checkbox" id="s-double-tap">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+
+        <div class="settings-item">
+          <span class="settings-item-label">記録時に確認する</span>
+          <label class="toggle">
+            <input type="checkbox" id="s-confirm">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- データ管理 -->
+      <div class="settings-group">
+        <div class="settings-group-title">データ</div>
+        <div class="settings-item">
+          <span class="settings-item-label">JSONエクスポート</span>
+          <button class="btn btn-secondary" id="btn-export" style="height:36px;font-size:13px;padding:0 12px">書き出す</button>
+        </div>
+        <p class="settings-hint">講義・出席記録をJSONファイルとして保存します</p>
+        <div class="settings-item">
+          <span class="settings-item-label">JSONインポート</span>
+          <button class="btn btn-secondary" id="btn-import" style="height:36px;font-size:13px;padding:0 12px">読み込む</button>
+        </div>
+        <p class="settings-hint">講義データをJSONファイルから一括登録できます</p>
+        <div class="settings-item">
+          <span class="settings-item-label" style="color:var(--color-absent-text)">すべてのデータを削除</span>
+          <button class="btn btn-danger" id="btn-reset" style="height:36px;font-size:13px;padding:0 12px">削除</button>
+        </div>
+      </div>
+
+      <p style="font-size:11px;color:var(--color-text-muted);text-align:center;padding:8px 0">
+        データはこのブラウザのローカルに保存されています
+      </p>
+
+    </div>
+  </main>
+
+  <!-- ボトムナビ -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item" data-href="index.html">
+      <svg data-lucide="calendar-days" />
+      <span>時間割</span>
+    </a>
+    <a href="records.html" class="bottom-nav-item" data-href="records.html">
+      <svg data-lucide="clipboard-list" />
+      <span>記録一覧</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item active" data-href="settings.html">
+      <svg data-lucide="settings" />
+      <span>設定</span>
+    </a>
+  </nav>
+
+  <script src="js/lucide.min.js"></script>
+  <script src="js/storage.js?v=5"></script>
+  <script src="js/app.js?v=12"></script>
+  <script src="js/settings.js?v=7"></script>
+  <script>
+    lucide.createIcons();
+    initSettingsPage();
+  </script>
+</body>
+</html>

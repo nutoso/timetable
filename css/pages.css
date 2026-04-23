@@ -1,0 +1,349 @@
+/* =============================
+   ホーム（index.html）
+   ============================= */
+.timetable-content {
+  padding-top: calc(var(--header-height) + var(--tab-height));
+}
+
+.no-lectures-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+}
+
+.no-lectures-day p {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* =============================
+   講義詳細（lecture.html）
+   ============================= */
+.detail-section {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detail-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.detail-row-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.detail-row-value {
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  font-weight: var(--font-medium);
+  flex: 1;
+}
+
+.detail-memo {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
+
+.detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+/* ---- 今日の記録セクション ---- */
+.detail-record-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4);
+}
+
+.detail-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.detail-section-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-text-secondary);
+}
+
+.today-count-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.today-count {
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.today-count.attend {
+  background: var(--color-attend-bg);
+  color: var(--color-attend-text);
+}
+
+.today-count.absent {
+  background: var(--color-absent-bg);
+  color: var(--color-absent-text);
+}
+
+.record-btn-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.record-btn-row .btn-record {
+  flex: 1;
+  height: 44px;
+  font-size: var(--text-base);
+}
+
+/* ---- 出席履歴 ---- */
+.detail-history-section {
+  /* gap は detail-section が担当 */
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--font-medium);
+}
+
+.history-empty {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-5);
+}
+
+/* =============================
+   講義追加・編集（lecture.html）
+   ============================= */
+.form-error {
+  font-size: var(--text-xs);
+  color: var(--color-absent-main);
+  margin-top: 2px;
+}
+
+.form-input.input-error,
+.form-input.input-error:focus {
+  border-color: var(--color-absent-main);
+}
+
+.form-bottom-actions {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* =============================
+   設定：テーマピッカー
+   ============================= */
+.theme-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.theme-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.swatch-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: var(--sw-bg);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.18s, transform 0.15s;
+}
+
+.swatch-preview::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 38%;
+  height: 38%;
+  border-radius: 50%;
+  background: var(--sw-dot);
+}
+
+.theme-swatch.active .swatch-preview {
+  border-color: var(--color-primary);
+  transform: scale(1.06);
+}
+
+.theme-swatch span {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-medium);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.theme-swatch.active span {
+  color: var(--color-primary);
+  font-weight: var(--font-bold);
+}
+
+/* =============================
+   設定：時限別時刻グリッド
+   ============================= */
+.settings-period-block {
+  border-top: 1px solid var(--color-border);
+  padding-bottom: var(--space-2);
+}
+
+.settings-period-cols {
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) 2px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.period-times-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px var(--space-4);
+}
+
+.period-times-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.period-time-input {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 5px 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--color-surface-2);
+  color: var(--color-text-primary);
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.period-time-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* =============================
+   最大幅制限（PC対応）
+   ============================= */
+@media (min-width: 769px) {
+  .header,
+  .bottom-nav,
+  .day-tabs-wrapper,
+  .toast-container {
+    max-width: 480px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  .fab {
+    right: calc(50% - 480px / 2 + 20px);
+  }
+
+  .page-content,
+  .timetable-content {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .context-menu-overlay {
+    align-items: center;
+    padding-bottom: 0;
+  }
+
+  .context-menu {
+    max-width: 480px;
+    width: 100%;
+    border-radius: var(--radius-lg);
+  }
+}

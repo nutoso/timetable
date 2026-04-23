@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0D1117">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="時間割">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>講義</title>
+  <link rel="stylesheet" href="css/variables.css?v=7">
+  <link rel="stylesheet" href="css/base.css?v=5">
+  <link rel="stylesheet" href="css/components.css?v=6">
+  <link rel="stylesheet" href="css/pages.css?v=2">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <button class="header-back" onclick="history.back()" aria-label="戻る">
+      <svg data-lucide="chevron-left" width="22" height="22" />
+    </button>
+    <h1 class="header-title" id="page-title">講義</h1>
+  </header>
+
+  <!-- コンテンツ（JS で描画） -->
+  <main class="page-content">
+    <div id="lecture-content"></div>
+  </main>
+
+  <!-- ボトムナビ -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item" data-href="index.html">
+      <svg data-lucide="calendar-days" />
+      <span>時間割</span>
+    </a>
+    <a href="records.html" class="bottom-nav-item" data-href="records.html">
+      <svg data-lucide="clipboard-list" />
+      <span>記録一覧</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item" data-href="settings.html">
+      <svg data-lucide="settings" />
+      <span>設定</span>
+    </a>
+  </nav>
+
+  <script src="js/lucide.min.js"></script>
+  <script src="js/storage.js?v=5"></script>
+  <script src="js/app.js?v=12"></script>
+  <script src="js/lecture.js?v=8"></script>
+  <script>
+    lucide.createIcons();
+    initLecturePage();
+  </script>
+</body>
+</html>

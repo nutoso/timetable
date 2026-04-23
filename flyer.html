@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#ece4d3">
+<meta name="apple-mobile-web-app-title" content="時間割">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>時間割 · フライヤー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&family=Yuji+Mai&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#2a2826;min-height:100dvh;overflow-x:hidden}
+body{font-family:'Zen Kaku Gothic New',sans-serif;color:#1a1815;display:flex;justify-content:center}
+.stage{width:100%;max-width:440px;min-height:100dvh;position:relative;overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.5);
+  background:
+    radial-gradient(ellipse 800px 400px at 30% 10%, rgba(255,230,100,.12), transparent 70%),
+    radial-gradient(ellipse 600px 300px at 80% 90%, rgba(255,80,60,.08), transparent 60%),
+    #ece4d3;
+}
+.stage::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.45;mix-blend-mode:multiply;z-index:2;
+  background-image:
+    radial-gradient(rgba(120,100,70,.4) 1px, transparent 1.5px),
+    radial-gradient(rgba(60,50,30,.3) 1px, transparent 1.5px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 2px 2px;
+}
+.stage::after{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(to bottom, transparent, rgba(0,0,0,.08) 20%, rgba(0,0,0,.12) 50%, rgba(0,0,0,.08) 80%, transparent);z-index:3;pointer-events:none}
+
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+.app{position:relative;z-index:5;padding-bottom:calc(80px + env(safe-area-inset-bottom));min-height:100dvh}
+
+/* corner staples */
+.staple{position:absolute;width:14px;height:5px;background:#6e6862;z-index:4;box-shadow:1px 1px 2px rgba(0,0,0,.3)}
+.staple.tl{top:14px;left:14px;transform:rotate(-18deg)}
+.staple.tr{top:14px;right:14px;transform:rotate(18deg)}
+.staple.br{bottom:calc(80px + env(safe-area-inset-bottom) + 14px);right:14px;transform:rotate(-14deg)}
+
+/* masthead */
+.mast{padding:28px 22px 14px;position:relative}
+.mast .eyebrow{font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;color:#1a1815;border-top:2px solid #1a1815;border-bottom:2px solid #1a1815;padding:4px 0;display:flex;justify-content:space-between;margin-bottom:14px}
+.mast .eyebrow::before{content:'★ ★ ★'}
+.mast h1{font-family:'Anton',sans-serif;font-size:76px;line-height:.85;letter-spacing:-2px;color:#1a1815;text-transform:uppercase;transform:rotate(-1.2deg);text-shadow:3px 3px 0 #ff4d2e}
+.mast h1 .alt{color:#ff4d2e;text-shadow:3px 3px 0 #1a1815;display:inline-block;transform:rotate(2deg) translateY(-2px)}
+.mast .sub{font-family:'Yuji Mai','Zen Kaku Gothic New',serif;font-size:28px;font-weight:900;margin-top:10px;letter-spacing:3px;color:#1a1815;border-left:4px solid #ff4d2e;padding-left:10px;transform:rotate(.3deg)}
+.mast .credit{font-family:'Special Elite',monospace;font-size:10px;letter-spacing:1.5px;color:#6e6862;margin-top:12px;text-transform:uppercase;display:flex;justify-content:space-between;position:relative;z-index:7}
+
+/* stamp */
+.stamp{position:absolute;border:3px double #c8321c;color:#c8321c;font-family:'Special Elite',monospace;font-weight:700;padding:6px 12px;text-transform:uppercase;letter-spacing:2px;font-size:11px;transform:rotate(-12deg);opacity:.85;border-radius:3px;background:rgba(200,50,28,.06);line-height:1.2;text-align:center;z-index:6}
+.stamp.big{font-size:14px;padding:8px 14px}
+.stamp .d{font-size:8px;letter-spacing:1px;margin-top:2px;display:block}
+
+/* flyer card */
+.flyer{position:relative;margin:0 16px 12px;background:#fffaf0;border:2px solid #1a1815;padding:14px 16px;box-shadow:4px 4px 0 #1a1815;cursor:pointer;z-index:5}
+.flyer.r1{transform:rotate(-.8deg)}
+.flyer.r2{transform:rotate(.9deg)}
+.flyer.r3{transform:rotate(-.4deg)}
+.flyer.r4{transform:rotate(.5deg)}
+.flyer.r5{transform:rotate(-1.1deg)}
+.flyer.r6{transform:rotate(.7deg)}
+.flyer.r7{transform:rotate(-.6deg)}
+.flyer.r8{transform:rotate(.4deg)}
+.flyer.empty{background:transparent;border:2px dashed #6e6862;box-shadow:none;padding:10px 16px;cursor:default}
+.flyer.empty .empty-txt{font-family:'Special Elite',monospace;font-size:11px;color:#6e6862;text-align:center;letter-spacing:2px;text-transform:uppercase;font-style:italic}
+
+.flyer .period-tag{position:absolute;top:-12px;left:12px;background:#1a1815;color:#ece4d3;font-family:'Anton',sans-serif;font-size:18px;padding:2px 10px;letter-spacing:1px;line-height:1}
+.flyer .period-tag.pr{background:#ff4d2e}
+.flyer .time-tag{position:absolute;top:-10px;right:12px;background:#ece4d3;color:#1a1815;font-family:'Special Elite',monospace;font-size:9px;padding:2px 6px;letter-spacing:1px;border:1.5px solid #1a1815;line-height:1}
+.flyer .name{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:22px;line-height:1.1;margin-top:4px;color:#1a1815;letter-spacing:-.5px}
+.flyer .where{font-family:'Special Elite',monospace;font-size:10.5px;color:#1a1815;margin-top:8px;letter-spacing:.5px;display:flex;justify-content:space-between;gap:8px;padding-top:6px;border-top:1px dashed #1a1815;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.flyer .where span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.flyer .where .room{flex:1 1 auto}
+.flyer .where .prof{flex:0 0 auto;max-width:50%}
+.flyer.has-stamp{padding-bottom:52px}
+
+.flyer.done{background:#fff4c7}
+.flyer.done .period-tag{background:#c8321c}
+.flyer.absent-card{background:#ece4d3;opacity:.7}
+.flyer.absent-card .name{text-decoration:line-through;text-decoration-color:#c8321c;text-decoration-thickness:3px}
+.flyer .stamp-mini{position:absolute;bottom:8px;left:50%;transform:translateX(-50%) rotate(-4deg) scale(.78);transform-origin:center;z-index:2}
+
+/* footer strip */
+.torn{margin:20px 14px 0;padding:14px 14px;background:#1a1815;color:#ece4d3;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;transform:rotate(-.5deg);
+  clip-path:polygon(0 8%,5% 0,12% 6%,22% 2%,33% 8%,44% 3%,55% 9%,66% 3%,77% 8%,88% 2%,98% 7%,100% 100%,0 100%);
+  border-bottom:3px solid #ff4d2e}
+.torn b{color:#ff4d2e;font-family:'Anton';font-size:14px;letter-spacing:3px}
+
+/* bottom nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:#1a1815;color:#ece4d3;padding:10px 14px calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:6px;z-index:50;border-top:3px solid #ff4d2e}
+.nav button{padding:6px 4px;border:1.5px solid transparent;font-family:'Anton',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#8c8680;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .12s}
+.nav button .jp{font-family:'Yuji Mai';font-size:10px;letter-spacing:3px}
+.nav button.on{background:#ff4d2e;color:#1a1815;border-color:#ece4d3;transform:rotate(-1deg);box-shadow:2px 2px 0 #ece4d3}
+
+/* FAB */
+.fab{position:fixed;right:calc(50% - 220px + 16px);bottom:calc(80px + env(safe-area-inset-bottom) + 8px);width:60px;height:60px;background:#ff4d2e;color:#1a1815;border:3px solid #1a1815;z-index:40;font-family:'Anton';font-size:34px;line-height:1;transform:rotate(-6deg);box-shadow:4px 4px 0 #1a1815;display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer}
+.fab:active{transform:rotate(-6deg) translate(2px,2px);box-shadow:2px 2px 0 #1a1815}
+@media(max-width:460px){.fab{right:16px}}
+
+/* week */
+.wk-grid{padding:8px 14px 0;display:flex;flex-direction:column;gap:12px}
+.wk-day{background:#fffaf0;border:2px solid #1a1815;padding:10px 12px;position:relative;box-shadow:3px 3px 0 #1a1815}
+.wk-day.today{background:#fff4c7;border-color:#c8321c;box-shadow:3px 3px 0 #c8321c}
+.wk-day:nth-child(odd){transform:rotate(-.3deg)}
+.wk-day:nth-child(even){transform:rotate(.4deg)}
+.wk-day .dh{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid #1a1815;padding-bottom:6px;margin-bottom:8px}
+.wk-day .dh .en{font-family:'Anton';font-size:28px;line-height:1;letter-spacing:-.5px;color:#1a1815;padding-right:4px}
+.wk-day .dh .jp{font-family:'Yuji Mai';font-size:20px;font-weight:900;color:#1a1815;margin-left:4px}
+.wk-day .dh .tag{margin-left:auto;font-family:'Special Elite',monospace;font-size:9px;letter-spacing:1.5px;color:#c8321c;text-transform:uppercase}
+.wk-day .pills{display:flex;flex-wrap:wrap;gap:5px}
+.wk-day .pill{display:inline-flex;align-items:center;gap:4px;background:#ece4d3;border:1.5px solid #1a1815;padding:3px 7px;font-family:'Zen Kaku Gothic New';font-weight:700;font-size:11px;letter-spacing:.2px;cursor:pointer;white-space:nowrap}
+.wk-day .pill .pn{font-family:'Anton';font-size:12px;color:#c8321c}
+.wk-day .pill.done{background:#ff4d2e;color:#1a1815}
+.wk-day .pill.abs{background:#1a1815;color:#ece4d3;text-decoration:line-through}
+.wk-day .empty{font-family:'Special Elite',monospace;font-size:10px;color:#6e6862;text-transform:uppercase;letter-spacing:1.5px;text-align:center;padding:4px 0}
+
+/* detail */
+.d-back{padding:14px 20px 10px;display:flex;justify-content:space-between;align-items:center;font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.d-back b{font-weight:400;cursor:pointer;background:#1a1815;color:#ece4d3;padding:3px 10px;transform:rotate(-1deg);display:inline-block}
+.d-hero{padding:0 20px 14px;position:relative}
+.d-hero .pnum{font-family:'Anton';font-size:160px;line-height:.8;color:#ff4d2e;-webkit-text-stroke:2.5px #1a1815;position:absolute;right:14px;top:-14px;transform:rotate(6deg);z-index:1}
+.d-hero .kicker{font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:#1a1815;background:#ff4d2e;padding:3px 8px;display:inline-block;transform:rotate(-1deg);position:relative;z-index:2;border:1.5px solid #1a1815}
+.d-hero .title{font-family:'Zen Kaku Gothic New',sans-serif;font-weight:900;font-size:44px;line-height:.95;letter-spacing:-1px;color:#1a1815;margin-top:10px;position:relative;z-index:2;text-shadow:3px 3px 0 #fff4c7}
+.d-hero .en{font-family:'Special Elite',monospace;font-size:13px;margin-top:8px;color:#1a1815;letter-spacing:1px;position:relative;z-index:2}
+
+.d-stats{margin:10px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;border:2.5px solid #1a1815;background:#fffaf0;box-shadow:4px 4px 0 #1a1815;transform:rotate(-.4deg)}
+.d-stats .c{padding:12px 8px;text-align:center;border-left:2px solid #1a1815}
+.d-stats .c:first-child{border-left:none}
+.d-stats .v{font-family:'Anton';font-size:42px;line-height:1;letter-spacing:-1px}
+.d-stats .v.pr{color:#c8321c}.d-stats .v.sa{color:#1a1815}.d-stats .v.wr{color:#b8741a}
+.d-stats .lb{font-family:'Special Elite',monospace;font-size:9px;margin-top:4px;letter-spacing:1.5px;color:#1a1815;text-transform:uppercase}
+
+.d-meta{margin:16px 20px 0}
+.d-meta .r{display:grid;grid-template-columns:60px 1fr;padding:7px 0;border-bottom:1.5px dashed #1a1815;font-size:13px}
+.d-meta .k{font-family:'Special Elite',monospace;font-size:10px;letter-spacing:1.5px;color:#6e6862;text-transform:uppercase;padding-top:2px}
+.d-meta .v2{font-weight:900}
+
+.d-rec{margin:18px 16px 0}
+.d-rec h4{font-family:'Anton';font-size:18px;letter-spacing:1px;background:#1a1815;color:#ece4d3;padding:4px 10px;display:inline-block;transform:rotate(-1deg);margin-bottom:8px}
+.d-rec .row{display:flex;gap:8px}
+.d-rec .row button{flex:1;border:2.5px solid #1a1815;background:#fffaf0;padding:14px 0;font-family:'Anton';font-size:18px;letter-spacing:1.5px;box-shadow:3px 3px 0 #1a1815;transition:all .1s}
+.d-rec .row button.on-pr{background:#ff4d2e;color:#1a1815}
+.d-rec .row button.on-ab{background:#1a1815;color:#ece4d3}
+.d-rec .row button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #1a1815}
+
+.d-hist{margin:18px 16px 0;background:#fffaf0;border:2px solid #1a1815;padding:10px 14px;box-shadow:3px 3px 0 #1a1815;transform:rotate(.3deg)}
+.d-hist h4{font-family:'Anton';font-size:16px;letter-spacing:1.5px;color:#1a1815;margin-bottom:8px;border-bottom:2px dashed #1a1815;padding-bottom:4px}
+.d-hist .h-r{display:flex;justify-content:space-between;padding:5px 0;font-family:'Special Elite',monospace;font-size:11px;border-bottom:1px dotted #6e6862;text-transform:uppercase;letter-spacing:1px}
+.d-hist .h-r:last-child{border-bottom:none}
+.d-hist .h-r .tag{font-weight:700}
+.d-hist .h-r .tag.pr{color:#c8321c}
+
+.d-edit{margin:14px 16px 0;display:flex;gap:8px}
+.d-edit button{flex:1;border:2px solid #1a1815;background:#ece4d3;padding:10px 0;font-family:'Anton';font-size:14px;letter-spacing:1.5px;box-shadow:2px 2px 0 #1a1815;text-transform:uppercase;cursor:pointer}
+
+/* records */
+.rec-h{padding:24px 22px 14px;position:relative}
+.rec-h h2{font-family:'Anton';font-size:88px;line-height:.82;letter-spacing:-3px;color:#1a1815;text-transform:uppercase;text-shadow:3px 3px 0 #ff4d2e;transform:rotate(-1deg)}
+.rec-h .sub{font-family:'Special Elite';font-size:11px;letter-spacing:2px;margin-top:8px;background:#1a1815;color:#ece4d3;padding:3px 10px;display:inline-block;transform:rotate(1deg);text-transform:uppercase}
+.rec-row{margin:0 16px 10px;background:#fffaf0;border:2px solid #1a1815;padding:10px 14px;box-shadow:3px 3px 0 #1a1815;display:grid;grid-template-columns:1fr auto;gap:4px 10px;cursor:pointer}
+.rec-row:nth-child(odd){transform:rotate(-.4deg)}
+.rec-row:nth-child(even){transform:rotate(.3deg)}
+.rec-row .name{font-family:'Zen Kaku Gothic New';font-weight:900;font-size:16px;line-height:1.15}
+.rec-row .meta{font-family:'Special Elite',monospace;font-size:10px;letter-spacing:1px;color:#6e6862;text-transform:uppercase}
+.rec-row .rate{grid-column:2;grid-row:1/3;align-self:center;font-family:'Anton';font-size:38px;line-height:1;letter-spacing:-1px;padding-left:10px;border-left:2px dashed #1a1815}
+.rec-row .rate.pr{color:#c8321c}.rec-row .rate.wr{color:#b8741a}.rec-row .rate.sa{color:#1a1815}
+
+/* settings */
+.s-h{padding:24px 22px 14px}
+.s-h h2{font-family:'Anton';font-size:88px;line-height:.82;letter-spacing:-3px;text-transform:uppercase;text-shadow:3px 3px 0 #ff4d2e;transform:rotate(-1deg)}
+.s-h .sub{font-family:'Yuji Mai';font-size:24px;font-weight:900;margin-top:8px;color:#1a1815;letter-spacing:3px}
+.s-g{margin:6px 16px 12px;background:#fffaf0;border:2px solid #1a1815;padding:12px 14px;box-shadow:3px 3px 0 #1a1815}
+.s-g:nth-child(odd){transform:rotate(-.3deg)}
+.s-g:nth-child(even){transform:rotate(.3deg)}
+.s-g h3{font-family:'Anton';font-size:18px;letter-spacing:2px;color:#1a1815;border-bottom:2px dashed #1a1815;padding-bottom:4px;margin-bottom:8px;text-transform:uppercase}
+.s-g h3 small{font-family:'Yuji Mai';font-size:13px;margin-left:8px;color:#c8321c}
+.s-i{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13.5px;border-bottom:1px dotted #6e6862}
+.s-i:last-child{border-bottom:none}
+.s-i .k{font-weight:700}
+.s-i .v{font-family:'Special Elite',monospace;font-size:11px;color:#1a1815;letter-spacing:1px;background:#ece4d3;padding:2px 8px;border:1px solid #1a1815}
+.s-i .sl{font-family:'Special Elite',monospace;font-size:10px;color:#ff4d2e;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;background:#1a1815;padding:3px 8px}
+
+/* empty state */
+.ep{padding:80px 20px;text-align:center;font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;color:#6e6862;line-height:2.2;text-transform:uppercase}
+.ep a{display:block;margin-top:12px;color:#ff4d2e;cursor:pointer;font-size:13px;letter-spacing:3px}
+
+/* toast */
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) rotate(-1deg);background:#ff4d2e;color:#1a1815;padding:10px 16px;font-family:'Anton';font-size:16px;letter-spacing:2px;z-index:80;text-transform:uppercase;border:2.5px solid #1a1815;box-shadow:3px 3px 0 #1a1815;animation:ti .25s ease-out;white-space:nowrap}
+@keyframes ti{from{opacity:0;transform:translate(-50%,8px) rotate(-1deg)}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="staple tl"></div>
+  <div class="staple tr"></div>
+  <div class="staple br"></div>
+  <div id="root"></div>
+</div>
+
+<script src="js/storage.js?v=5"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel">
+const {useState, useMemo} = React;
+
+const DOW_EN = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const DOW_JP = ['日','月','火','水','木','金','土'];
+const DOW_LONG = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const TODAY     = new Date();
+const TODAY_DOW = TODAY.getDay();
+const TODAY_STR = `${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
+
+function weekNum(settings) {
+  const sd = settings?.schoolStartDate;
+  const s  = sd ? new Date(sd) : new Date(TODAY.getFullYear(), 2, 1);
+  if (isNaN(s.getTime())) return 1;
+  return Math.max(1, Math.floor((TODAY - s) / (7*24*3600*1000)) + 1);
+}
+
+function monthDay() {
+  return `${String(TODAY.getMonth()+1).padStart(2,'0')} · ${String(TODAY.getDate()).padStart(2,'0')}`;
+}
+
+function weekRange() {
+  const mon = new Date(TODAY); mon.setDate(TODAY.getDate() - ((TODAY_DOW+6)%7));
+  const fri = new Date(mon); fri.setDate(mon.getDate()+4);
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+  return `${fmt(mon)} — ${fmt(fri)}`;
+}
+
+function lectureTime(l, settings) {
+  if (l.startTime) return `${l.startTime}–${l.endTime||''}`;
+  const pt = (settings.periodTimes || DEFAULT_PERIOD_TIMES)[l.period - 1];
+  return pt ? `${pt.start}–${pt.end}` : `${l.period}限`;
+}
+
+function todayCounts(records, lid) {
+  const r = records.filter(r => r.lectureId === lid && r.date === TODAY_STR);
+  return {
+    attend: r.filter(x => x.status === 'attend').length,
+    absent: r.filter(x => x.status === 'absent').length,
+  };
+}
+
+function getDayName(dow) {
+  const full = DOW_LONG[dow];
+  const split = Math.ceil(full.length / 2);
+  return [full.slice(0, split), full.slice(split)];
+}
+
+/* ======== App ======== */
+function App() {
+  const [tab, setTab]   = useState('today');
+  const [did, setDid]   = useState(null);
+  const [rev, setRev]   = useState(0);
+  const [toast, setToast] = useState(null);
+
+  const {lectures, records, settings} = useMemo(() => ({
+    lectures: getLectures(),
+    records:  getRecords(),
+    settings: getSettings(),
+  }), [rev]);
+
+  const refresh = () => setRev(n => n+1);
+  const showToast = msg => { setToast(msg); setTimeout(()=>setToast(null), 1800); };
+
+  const mark = (lid, status) => {
+    saveRecord(lid, TODAY_STR, status);
+    showToast(status==='attend' ? 'ATTEND +1' : 'ABSENT +1');
+    refresh();
+  };
+
+  const openDetail = id => { setDid(id); setTab('detail'); };
+
+  return (
+    <div className="app">
+      {tab==='today'   && <Today   lectures={lectures} records={records} settings={settings} onOpen={openDetail}/>}
+      {tab==='week'    && <Week    lectures={lectures} records={records} settings={settings} onOpen={openDetail}/>}
+      {tab==='detail'  && <Detail  id={did} lectures={lectures} records={records} settings={settings} onBack={()=>setTab('today')} onMark={mark}/>}
+      {tab==='records' && <Records lectures={lectures} records={records} settings={settings} onOpen={openDetail}/>}
+      {tab==='pref'    && <Pref    settings={settings} onRefresh={refresh}/>}
+      <Nav tab={tab==='detail'?'today':tab} setTab={setTab}/>
+      {tab!=='detail' && tab!=='pref' &&
+        <button className="fab" onClick={()=>location.href='lecture.html'}>+</button>}
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+/* ======== Nav ======== */
+function Nav({tab, setTab}) {
+  const items = [
+    {k:'today',   en:'Day',  jp:'日'},
+    {k:'week',    en:'Week', jp:'週'},
+    {k:'records', en:'Log',  jp:'録'},
+    {k:'pref',    en:'Pref', jp:'設'},
+  ];
+  return (
+    <nav className="nav">
+      {items.map(i => (
+        <button key={i.k} className={tab===i.k?'on':''} onClick={()=>setTab(i.k)}>
+          <span>{i.en}</span>
+          <span className="jp">{i.jp}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+/* ======== Today ======== */
+function Today({lectures, records, settings, onOpen}) {
+  const maxP   = settings.periodsCount || 6;
+  const todayL = lectures.filter(l=>l.dayOfWeek===TODAY_DOW).sort((a,b)=>a.period-b.period);
+  const byP    = {}; todayL.forEach(l=>byP[l.period]=l);
+  const done   = todayL.filter(l=>todayCounts(records,l.id).attend>0).length;
+  const wn     = weekNum(settings);
+  const [first, second] = getDayName(TODAY_DOW);
+
+  const semYear = `${settings.semester||'前期'} '${String(TODAY.getFullYear()).slice(2)}`;
+
+  return (<>
+    <div className="mast">
+      <div className="eyebrow">
+        <span>VOL.{String(settings.grade||1).padStart(2,'0')}</span>
+        <span>WEEK {String(wn).padStart(2,'0')} · {semYear.toUpperCase()}</span>
+      </div>
+      <h1>{first}<span className="alt">{second}</span></h1>
+      <div className="sub">{DOW_JP[TODAY_DOW]}曜日 · {monthDay()}</div>
+      <div className="credit">
+        <span>◆ ATTENDANCE LEDGER ◆</span>
+        <span>—— N° {String(TODAY.getDate()).padStart(3,'0')}</span>
+      </div>
+      <div className="stamp big" style={{top:18,right:16}}>Today<span className="d">{`${TODAY.getFullYear()}·${monthDay().replace(' · ','·')}`}</span></div>
+    </div>
+
+    {Array.from({length:maxP},(_,i)=>i+1).map(p=>{
+      const l  = byP[p];
+      const rc = `r${((p-1)%8)+1}`;
+      if (!l) return (
+        <div key={p} className={`flyer ${rc} empty`}>
+          <div className="empty-txt">— period {p} · off —</div>
+        </div>
+      );
+      const tc   = todayCounts(records, l.id);
+      const time = lectureTime(l, settings);
+      const hasA = tc.attend > 0;
+      const hasX = tc.absent > 0;
+      const cls  = `flyer ${rc}${hasA?' done has-stamp':hasX?' absent-card has-stamp':''}`;
+      return (
+        <div key={p} className={cls} onClick={()=>onOpen(l.id)}>
+          <span className={`period-tag${hasA?' pr':''}`}>P.{p}</span>
+          <span className="time-tag">{time}</span>
+          <div className="name">{l.name}</div>
+          <div className="where">
+            {l.room    && <span className="room">◉ {l.room}</span>}
+            {l.teacher && <span className="prof">— {l.teacher}</span>}
+          </div>
+          {hasA && (
+            <div className="stamp-mini stamp">Attend ×{tc.attend}<span className="d">{monthDay().replace(' · ','·')}</span></div>
+          )}
+          {!hasA && hasX && (
+            <div className="stamp-mini stamp" style={{borderColor:'#1a1815',color:'#1a1815'}}>Absent ×{tc.absent}<span className="d">{monthDay().replace(' · ','·')}</span></div>
+          )}
+        </div>
+      );
+    })}
+
+    {todayL.length===0 && (TODAY_DOW===0||TODAY_DOW===6) && (
+      <div className="ep">— Today is {DOW_EN[TODAY_DOW]}. No class. —</div>
+    )}
+    {todayL.length===0 && TODAY_DOW>=1 && TODAY_DOW<=5 && (
+      <div className="ep">
+        — No lectures registered —
+        <a onClick={()=>location.href='lecture.html'}>＋ ADD LECTURE</a>
+      </div>
+    )}
+
+    <div className="torn">TODAY — <b>{done} / {todayL.length}</b> — LOGGED</div>
+    <div style={{height:30}}/>
+  </>);
+}
+
+/* ======== Week ======== */
+function Week({lectures, records, settings, onOpen}) {
+  const days = settings.displayDays==='sun' ? [1,2,3,4,5,6,0]
+             : settings.displayDays==='sat' ? [1,2,3,4,5,6]
+             : [1,2,3,4,5];
+  const wn = weekNum(settings);
+
+  return (<>
+    <div className="mast" style={{paddingBottom:8}}>
+      <div className="eyebrow">
+        <span>THIS WEEK</span>
+        <span>{weekRange()}</span>
+      </div>
+      <h1 style={{fontSize:64}}>The<span className="alt"> Week</span></h1>
+      <div className="sub">今週 · 第 {wn} 週</div>
+    </div>
+    <div className="wk-grid">
+      {days.map(d=>{
+        const list = lectures.filter(l=>l.dayOfWeek===d).sort((a,b)=>a.period-b.period);
+        return (
+          <div key={d} className={`wk-day${d===TODAY_DOW?' today':''}`}>
+            <div className="dh">
+              <span className="en">{DOW_EN[d]}</span>
+              <span className="jp">{DOW_JP[d]}</span>
+              {d===TODAY_DOW && <span className="tag">★ TODAY</span>}
+            </div>
+            {list.length
+              ? <div className="pills">
+                  {list.map(l=>{
+                    const tc = d===TODAY_DOW ? todayCounts(records,l.id) : null;
+                    const stCls = tc ? (tc.attend>0?' done':tc.absent>0?' abs':'') : '';
+                    return (
+                      <span key={l.id} className={`pill${stCls}`}
+                            onClick={()=>onOpen(l.id)}>
+                        <span className="pn">P{l.period}</span>{l.name}
+                      </span>
+                    );
+                  })}
+                </div>
+              : <div className="empty">— no class —</div>}
+          </div>
+        );
+      })}
+    </div>
+    <div style={{height:40}}/>
+  </>);
+}
+
+/* ======== Detail ======== */
+function Detail({id, lectures, records, settings, onBack, onMark}) {
+  const l = lectures.find(x=>x.id===id);
+  if (!l) return <div className="ep">— NOT FOUND —<a onClick={onBack}>◂ BACK</a></div>;
+
+  const r      = records.filter(x=>x.lectureId===id);
+  const attend = r.filter(x=>x.status==='attend').length;
+  const absent = r.filter(x=>x.status==='absent').length;
+  const total  = attend+absent;
+  const rate   = total>0 ? Math.round(attend/total*100) : 0;
+  const maxAbs = l.maxAbsences || 5;
+  const remain = Math.max(0, maxAbs-absent);
+  const tc     = todayCounts(records, id);
+  const time   = lectureTime(l, settings);
+  const hist   = [...r].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+
+  const remainCls = remain>2?'sa':remain===1?'wr':'pr';
+
+  return (<>
+    <div className="d-back">
+      <b onClick={onBack}>◂ BACK</b>
+      <span>ENTRY N°{id.slice(-3).toUpperCase()}</span>
+    </div>
+    <div className="d-hero">
+      <div className="pnum">P.{l.period}</div>
+      <div className="kicker">◆ {DOW_EN[l.dayOfWeek]} · {time}</div>
+      <div className="title">{l.name}</div>
+      {l.teacher && <div className="en">— {l.teacher}</div>}
+    </div>
+    <div className="d-stats">
+      <div className="c">
+        <div className="v pr">{String(attend).padStart(2,'0')}</div>
+        <div className="lb">★ Attend</div>
+      </div>
+      <div className="c">
+        <div className="v sa">{String(absent).padStart(2,'0')}</div>
+        <div className="lb">× Absent</div>
+      </div>
+      <div className="c">
+        <div className={`v ${remainCls}`}>{String(remain).padStart(2,'0')}</div>
+        <div className="lb">◎ Can skip</div>
+      </div>
+    </div>
+    <div style={{padding:'0 20px',fontFamily:'Special Elite',fontSize:10,letterSpacing:1.5,textTransform:'uppercase',marginTop:8}}>
+      Rate —— <span style={{fontFamily:'Anton',fontSize:22,color:'#c8321c',verticalAlign:-3,letterSpacing:-1}}>{rate}%</span>
+    </div>
+    <div className="d-meta">
+      {l.teacher && <div className="r"><div className="k">Prof</div><div className="v2">{l.teacher}</div></div>}
+      {l.room    && <div className="r"><div className="k">Room</div><div className="v2">{l.room}</div></div>}
+      <div className="r"><div className="k">Time</div><div className="v2">{time}</div></div>
+      {l.memo    && <div className="r"><div className="k">Memo</div><div className="v2">{l.memo}</div></div>}
+    </div>
+    <div className="d-rec">
+      <h4>◆ TODAY ◆</h4>
+      <div style={{fontFamily:'Special Elite',fontSize:10,letterSpacing:1.5,color:'#6e6862',marginBottom:8,textTransform:'uppercase'}}>
+        Attend: {tc.attend} · Absent: {tc.absent}
+      </div>
+      <div className="row">
+        <button onClick={()=>onMark(id,'attend')}>★ ATTEND</button>
+        <button onClick={()=>onMark(id,'absent')}>× ABSENT</button>
+      </div>
+    </div>
+    <div className="d-hist">
+      <h4>◆ PAST ENTRIES</h4>
+      {hist.length===0
+        ? <div className="d-hist .h-r" style={{fontStyle:'italic',fontSize:11,color:'#6e6862',padding:'6px 0',fontFamily:'Special Elite'}}>No records yet</div>
+        : hist.map((h,i)=>(
+          <div key={i} className="h-r">
+            <span>{h.date.replace(/-/g,' · ')}</span>
+            <span className={`tag${h.status==='attend'?' pr':''}`}>
+              {h.status==='attend'?'★ Attend':'× Absent'}
+            </span>
+          </div>
+        ))}
+    </div>
+    <div className="d-edit">
+      <button onClick={()=>location.href=`lecture.html?id=${id}&mode=edit`}>◆ EDIT</button>
+    </div>
+    <div style={{height:60}}/>
+  </>);
+}
+
+/* ======== Records ======== */
+function Records({lectures, records, settings, onOpen}) {
+  if (!lectures.length) return (
+    <div className="ep">
+      — No lectures registered —
+      <a onClick={()=>location.href='lecture.html'}>＋ ADD LECTURE</a>
+    </div>
+  );
+
+  const sorted = [...lectures].sort((a,b)=>{
+    const ra = records.filter(r=>r.lectureId===a.id);
+    const rb = records.filter(r=>r.lectureId===b.id);
+    const pA = ra.length ? ra.filter(r=>r.status==='absent').length/ra.length : 0;
+    const pB = rb.length ? rb.filter(r=>r.status==='absent').length/rb.length : 0;
+    return pB - pA;
+  });
+
+  return (<>
+    <div className="rec-h">
+      <h2>Logbook</h2>
+      <div className="sub">◆ {lectures.length} COURSES ◆ {(settings.semester||'前期').toUpperCase()} {TODAY.getFullYear()}</div>
+    </div>
+    {sorted.map(l=>{
+      const r   = records.filter(x=>x.lectureId===l.id);
+      const att = r.filter(x=>x.status==='attend').length;
+      const tot = r.length;
+      const rt  = tot>0 ? Math.round(att/tot*100) : null;
+      const cls = rt===null?'sa':rt>=85?'pr':rt>=70?'wr':'sa';
+      return (
+        <div key={l.id} className="rec-row" onClick={()=>onOpen(l.id)}>
+          <div className="name">{l.name}</div>
+          <div className="meta">{DOW_EN[l.dayOfWeek]} · P{l.period}{l.teacher?` · ${l.teacher}`:''}</div>
+          <div className={`rate ${cls}`}>{rt!==null?`${rt}`:'—'}<span style={{fontSize:16,marginLeft:rt!==null?-3:0}}>{rt!==null?'%':''}</span></div>
+        </div>
+      );
+    })}
+    <div style={{height:40}}/>
+  </>);
+}
+
+/* ======== Pref ======== */
+function Pref({settings, onRefresh}) {
+  const selStyle = {fontFamily:'Special Elite',fontSize:11,background:'#ece4d3',border:'1px solid #1a1815',padding:'2px 6px',color:'#1a1815',letterSpacing:.5,outline:'none',cursor:'pointer'};
+  const save = (patch) => { saveSettings(patch); onRefresh(); };
+  const wn = weekNum(settings);
+
+  return (<>
+    <div className="s-h">
+      <h2>Pref.</h2>
+      <div className="sub">設定 · 調整</div>
+    </div>
+    <div className="s-g">
+      <h3>Display <small>表示</small></h3>
+      <div className="s-i">
+        <span className="k">学年</span>
+        <select value={settings.grade||1} onChange={e=>save({grade:Number(e.target.value)})} style={selStyle}>
+          {[1,2,3,4,5,6].map(n=><option key={n} value={n}>{n}年生</option>)}
+        </select>
+      </div>
+      <div className="s-i">
+        <span className="k">学期</span>
+        <select value={settings.semester||'前期'} onChange={e=>save({semester:e.target.value})} style={selStyle}>
+          <option value="前期">前期</option>
+          <option value="後期">後期</option>
+        </select>
+      </div>
+      <div className="s-i">
+        <span className="k">時限数</span>
+        <select value={settings.periodsCount||6} onChange={e=>save({periodsCount:Number(e.target.value)})} style={selStyle}>
+          {[4,5,6,7,8].map(n=><option key={n} value={n}>{n}限</option>)}
+        </select>
+      </div>
+      <div className="s-i">
+        <span className="k">表示曜日</span>
+        <select value={settings.displayDays||'weekday'} onChange={e=>save({displayDays:e.target.value})} style={selStyle}>
+          <option value="weekday">月〜金</option>
+          <option value="sat">月〜土</option>
+          <option value="sun">月〜日</option>
+        </select>
+      </div>
+      <div className="s-i">
+        <span className="k">授業開始日</span>
+        <input type="date" defaultValue={settings.schoolStartDate||''} onChange={e=>save({schoolStartDate:e.target.value})}
+               style={{fontFamily:'Special Elite',fontSize:11,background:'#ece4d3',border:'1px solid #1a1815',padding:'2px 6px',color:'#1a1815',letterSpacing:.5}}/>
+      </div>
+      <div className="s-i"><span className="k">現在の週</span><span className="v">第 {wn} 週</span></div>
+    </div>
+    <div className="s-g">
+      <h3>Navigate <small>移動</small></h3>
+      <div className="s-i">
+        <span className="k">詳細設定 · テーマ変更</span>
+        <a href="settings.html" className="sl">→ 設定へ</a>
+      </div>
+      <div className="s-i">
+        <span className="k">標準デザインに戻る</span>
+        <a className="sl" style={{background:'#6e6862',cursor:'pointer'}}
+          onClick={()=>{
+            try{const c=JSON.parse(localStorage.getItem('tt_settings')||'{}');c.theme='midnight';localStorage.setItem('tt_settings',JSON.stringify(c));}catch{}
+            window.location.href='index.html';
+          }}>→ 切り替え</a>
+      </div>
+    </div>
+    <div style={{textAlign:'center',padding:'24px 20px 40px',fontFamily:'Special Elite',fontSize:10,letterSpacing:2,color:'#6e6862',textTransform:'uppercase'}}>
+      ◆ PRINTED WITH ATTITUDE ◆<br/>
+      <span style={{fontFamily:'Yuji Mai',fontSize:14,color:'#c8321c',letterSpacing:4}}>出席録</span>
+    </div>
+  </>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

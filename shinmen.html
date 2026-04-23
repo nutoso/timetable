@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f3efe7">
+<title>時間割 · 紙面</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Shippori+Mincho:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#f3efe7;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Shippori Mincho',serif;color:#111}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+.app{padding-bottom:calc(60px + env(safe-area-inset-bottom));min-height:100dvh}
+
+/* nav */
+.nav{position:fixed;bottom:0;left:0;right:0;padding:11px 20px calc(11px + env(safe-area-inset-bottom));border-top:.5px solid #111;background:#f3efe7;display:grid;grid-template-columns:repeat(4,1fr);font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1.8px;text-transform:uppercase;z-index:50}
+.nav button{padding:4px 0;color:#8a8478;transition:color .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav button.on{color:#111}
+.nav .nv{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;letter-spacing:-.5px;font-weight:700}
+.nav button.on .nv{color:#d2341e}
+.fab{position:fixed;right:18px;bottom:calc(68px + env(safe-area-inset-bottom));width:46px;height:46px;border:1px solid #111;background:#111;color:#f3efe7;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-size:26px;font-weight:900;z-index:40;box-shadow:3px 3px 0 #d2341e;cursor:pointer}
+.fab:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #d2341e}
+
+/* header row */
+.hdr{padding:16px 20px 6px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:.5px solid #111;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+
+/* today */
+.hero{padding:20px 20px 10px;position:relative}
+.hero .d{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#8a8478;margin-bottom:4px}
+.hero .big{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:clamp(72px,22vw,108px);line-height:.82;letter-spacing:-4px}
+.hero .big .d2{color:#d2341e}
+.hero .jp{font-weight:900;font-size:clamp(48px,15vw,70px);line-height:.9;letter-spacing:-2px;margin-top:-4px}
+.hero .rt{position:absolute;right:20px;top:40px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8a8478;text-align:right;line-height:1.6}
+.lede{padding:10px 20px 14px;font-style:italic;font-size:11.5px;color:#8a8478;border-bottom:.5px solid #111;letter-spacing:.2px}
+.rotate{position:fixed;right:-38px;top:50%;transform:translateY(-50%) rotate(90deg);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:4px;color:rgba(138,132,120,.35);pointer-events:none;z-index:1}
+
+.period{display:grid;grid-template-columns:44px 1fr auto;align-items:baseline;padding:13px 20px;border-bottom:.5px solid rgba(138,132,120,.3);cursor:pointer;transition:background .15s}
+.period:active{background:rgba(0,0,0,.04)}
+.period.empty{opacity:.28;cursor:default;pointer-events:none}
+.period .pn{font-family:'Playfair Display',serif;font-style:italic;font-size:32px;font-weight:700;line-height:1;color:#111}
+.period.pr .pn{color:#d2341e}
+.period .name{font-weight:700;font-size:16px;line-height:1.2}
+.period .meta{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8a8478;letter-spacing:.5px;margin-top:4px}
+.period .st{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:#8a8478;text-align:right;min-width:60px}
+.period.pr .st{color:#d2341e;font-weight:700}
+.period.ab .st{color:#111;font-weight:700}
+.footnote{padding:30px 20px;text-align:center;font-style:italic;font-size:10px;color:#8a8478;letter-spacing:.5px;border-top:.5px solid rgba(138,132,120,.4);margin-top:20px}
+.footnote em{color:#111;font-family:'Playfair Display',serif;font-weight:700;font-size:12px}
+
+/* week */
+.week-h{padding:20px 20px 10px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:.5px solid #111}
+.week-h .big{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:62px;line-height:.9;letter-spacing:-2.5px}
+.week-h .rt{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a8478;text-align:right;line-height:1.6}
+.day-block{padding:16px 20px;border-top:.5px solid #111;position:relative}
+.day-block.today{background:rgba(210,52,30,.06)}
+.day-block .hd{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.day-block .en{font-family:'Playfair Display',serif;font-style:italic;font-size:38px;font-weight:700;line-height:1}
+.day-block.today .en{color:#d2341e}
+.day-block .jp{font-weight:900;font-size:18px}
+.day-block .tag{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:#d2341e}
+.day-block .wlist{display:flex;flex-wrap:wrap;gap:3px 0}
+.day-block .witem{display:flex;align-items:baseline;gap:7px;margin-right:16px;font-size:12px;line-height:1.5;cursor:pointer}
+.day-block .witem .wpnum{font-family:'JetBrains Mono',monospace;font-size:9px;color:#8a8478}
+.day-block .witem .wnm{font-weight:700}
+.day-block .witem.done .wnm{color:#d2341e}
+.day-block .witem.abs .wnm{text-decoration:line-through;color:#8a8478}
+.day-block .wempty{font-style:italic;font-size:11px;color:#8a8478}
+
+/* detail */
+.back{padding:14px 20px 8px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:.5px solid #111;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.back b{font-weight:500;cursor:pointer}
+.d-hero{padding:22px 20px 14px}
+.d-hero .sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a8478;letter-spacing:1.5px;margin-bottom:10px}
+.d-hero .title{font-weight:900;font-size:clamp(28px,10vw,42px);line-height:.95;letter-spacing:-1px}
+.d-hero .en{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:#8a8478;margin-top:8px}
+.dstats{margin:14px 20px;padding:14px 0;border-top:1.5px solid #111;border-bottom:.5px solid #111;display:grid;grid-template-columns:1fr 1fr 1fr}
+.dstats .c{padding:0 10px;border-left:.5px solid #111}
+.dstats .c:first-child{border-left:none;padding-left:0}
+.dstats .v{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:42px;line-height:1}
+.dstats .lb{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:#8a8478;margin-top:3px;text-transform:uppercase}
+.dstats .v.pr{color:#d2341e}
+.dstats .v.sa{color:#8a8478}
+.dmeta{padding:0 20px;font-size:12.5px;line-height:1.9}
+.dmeta .r{display:grid;grid-template-columns:60px 1fr;padding:5px 0;border-bottom:.5px dotted rgba(138,132,120,.6)}
+.dmeta .k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1.5px;color:#8a8478;text-transform:uppercase;padding-top:5px}
+.dmeta .v2{font-weight:700}
+.rec-row{padding:16px 20px 0;display:flex;gap:8px}
+.rec-row button{flex:1;border:1px solid #111;padding:12px 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;transition:all .15s}
+.rec-row button.pr{background:#d2341e;color:#f3efe7;border-color:#d2341e}
+.rec-row button.pr.on{background:#111;border-color:#111}
+.rec-row button.ab.on{background:#111;color:#f3efe7}
+.history{padding:22px 20px 0}
+.history h4{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#8a8478;text-transform:uppercase;margin-bottom:10px;border-bottom:.5px solid #111;padding-bottom:5px}
+.history .h-item{display:flex;justify-content:space-between;padding:7px 0;border-bottom:.5px dotted rgba(138,132,120,.5);font-size:12px}
+.history .h-item .dt{font-family:'JetBrains Mono',monospace}
+.history .h-item .htag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase}
+.history .h-item .htag.pr{color:#d2341e}
+
+/* records */
+.rec-h{padding:20px 20px 10px;border-bottom:.5px solid #111}
+.rec-h .big{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:58px;line-height:.9;letter-spacing:-2px}
+.rec-h .sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:#8a8478;margin-top:4px;text-transform:uppercase}
+.rec-item{padding:14px 20px;border-bottom:.5px solid rgba(138,132,120,.35);display:grid;grid-template-columns:1fr auto;gap:4px 12px;cursor:pointer}
+.rec-item:active{background:rgba(0,0,0,.03)}
+.rec-item .rname{font-weight:700;font-size:15px;line-height:1.2;grid-column:1}
+.rec-item .rmeta{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8a8478;letter-spacing:.5px;grid-column:1}
+.rec-item .rbar{grid-column:2;grid-row:1/3;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px}
+.rec-item .rrate{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:28px;line-height:1}
+.rec-item .rrate.pr{color:#d2341e}.rec-item .rrate.wr{color:#c08418}.rec-item .rrate.ab{color:#8a8478}
+.rec-item .rct{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:#8a8478}
+
+/* pref */
+.set-h{padding:20px 20px 10px;border-bottom:.5px solid #111}
+.set-h .big{font-family:'Playfair Display',serif;font-style:italic;font-weight:900;font-size:58px;line-height:.9;letter-spacing:-2px}
+.set-g{padding:14px 20px 6px;border-bottom:.5px solid rgba(138,132,120,.4)}
+.set-g h3{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8a8478;margin-bottom:10px;display:flex;align-items:baseline;gap:8px}
+.set-g h3::before{content:'—';color:#d2341e}
+.set-i{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:.5px dotted rgba(138,132,120,.4);font-size:13.5px}
+.set-i:last-child{border-bottom:none}
+.set-i .sk{font-weight:500}
+.set-i .sv{font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a8478;letter-spacing:1px}
+.set-i .sl{font-family:'JetBrains Mono',monospace;font-size:10px;color:#d2341e;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer}
+
+/* toast */
+.toast{position:fixed;bottom:calc(78px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#111;color:#f3efe7;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;z-index:80;border-left:3px solid #d2341e;animation:ti .25s ease-out;white-space:nowrap}
+@keyframes ti{from{opacity:0;transform:translate(-50%,6px)}}
+
+/* empty */
+.ep{padding:80px 20px;text-align:center;font-style:italic;font-size:13px;color:#8a8478;line-height:2}
+.ep a{display:inline-block;margin-top:8px;color:#d2341e;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="js/storage.js?v=5"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel">
+const {useState, useMemo} = React;
+
+const DOW_EN  = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const DOW_JP  = ['日','月','火','水','木','金','土'];
+const DOW_BIG = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
+
+const TODAY     = new Date();
+const TODAY_DOW = TODAY.getDay();
+const TODAY_STR = `${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
+const TODAY_LBL = `${TODAY.getMonth()+1} / ${TODAY.getDate()}`;
+
+function weekNum(settings) {
+  const sd = settings?.schoolStartDate;
+  const s  = sd ? new Date(sd) : new Date(TODAY.getFullYear(), 2, 1);
+  if (isNaN(s.getTime())) return 1;
+  return Math.max(1, Math.floor((TODAY - s) / (7*24*3600*1000)) + 1);
+}
+
+function lectureTime(l, settings) {
+  if (l.startTime) return `${l.startTime}–${l.endTime||''}`;
+  const pt = (settings.periodTimes || DEFAULT_PERIOD_TIMES)[l.period - 1];
+  return pt ? `${pt.start}–${pt.end}` : `${l.period}限`;
+}
+
+function todayCounts(records, lid) {
+  const r = records.filter(r => r.lectureId === lid && r.date === TODAY_STR);
+  return {
+    attend: r.filter(x => x.status === 'attend').length,
+    absent: r.filter(x => x.status === 'absent').length,
+  };
+}
+
+/* ======== App ======== */
+function App() {
+  const [tab, setTab]     = useState('today');
+  const [did, setDid]     = useState(null);
+  const [rev, setRev]     = useState(0);
+  const [toast, setToast] = useState(null);
+
+  const {lectures, records, settings} = useMemo(() => ({
+    lectures: getLectures(),
+    records:  getRecords(),
+    settings: getSettings(),
+  }), [rev]);
+
+  const refresh = () => setRev(n => n+1);
+
+  const showToast = msg => { setToast(msg); setTimeout(()=>setToast(null), 1800); };
+
+  const mark = (lid, status) => {
+    saveRecord(lid, TODAY_STR, status);
+    showToast(status==='attend' ? '出席 +1' : '欠席 +1');
+    refresh();
+  };
+
+  const openDetail = id => { setDid(id); setTab('detail'); };
+
+  return (
+    <div className="app">
+      {tab==='today'   && <Today   lectures={lectures} records={records} settings={settings} onOpen={openDetail}/>}
+      {tab==='week'    && <Week    lectures={lectures} records={records} settings={settings} onOpen={openDetail}/>}
+      {tab==='detail'  && <Detail  id={did} lectures={lectures} records={records} settings={settings} onBack={()=>setTab('today')} onMark={mark}/>}
+      {tab==='records' && <Records lectures={lectures} records={records} settings={settings} onOpen={openDetail}/>}
+      {tab==='pref'    && <Pref    settings={settings} onRefresh={refresh}/>}
+      <Nav tab={tab==='detail'?'today':tab} setTab={setTab}/>
+      {tab!=='detail' && tab!=='pref' &&
+        <button className="fab" onClick={()=>location.href='lecture.html'}>+</button>}
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+/* ======== Nav ======== */
+function Nav({tab, setTab}) {
+  return (
+    <nav className="nav">
+      {[['today','01','Day'],['week','02','Week'],['records','03','Log'],['pref','04','Pref']].map(([k,n,en])=>(
+        <button key={k} className={tab===k?'on':''} onClick={()=>setTab(k)}>
+          <span className="nv">{en}</span>
+          <span style={{fontFamily:'JetBrains Mono,monospace'}}>{n}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+/* ======== Today ======== */
+function Today({lectures, records, settings, onOpen}) {
+  const maxP   = settings.periodsCount || 6;
+  const todayL = lectures.filter(l=>l.dayOfWeek===TODAY_DOW).sort((a,b)=>a.period-b.period);
+  const byP    = {}; todayL.forEach(l=>byP[l.period]=l);
+  const done   = todayL.filter(l=>todayCounts(records,l.id).attend>0).length;
+  const wn     = weekNum(settings);
+
+  return (<>
+    <div className="hdr">
+      <span>{settings.semester||'前期'} — {TODAY.getFullYear()}</span>
+      <span>N°{String(TODAY.getDate()).padStart(3,'0')}</span>
+    </div>
+    <div className="hero">
+      <div className="d">{DOW_EN[TODAY_DOW]} · {TODAY_LBL}</div>
+      <div className="big">{DOW_BIG[TODAY_DOW]}<span className="d2">·</span></div>
+      <div className="jp">{DOW_JP[TODAY_DOW]}曜日</div>
+      <div className="rt">{settings.grade||1}年生<br/>{settings.semester||'前期'}<br/>Week {String(wn).padStart(2,'0')}</div>
+    </div>
+    <div className="lede">— A weekly record of lectures attended, skipped, and merely endured.</div>
+    <div className="rotate">ATTENDANCE · LEDGER · {TODAY.getFullYear()}</div>
+
+    {Array.from({length:maxP},(_,i)=>i+1).map(p=>{
+      const l = byP[p];
+      if (!l) return (
+        <div key={p} className="period empty">
+          <div className="pn">{String(p).padStart(2,'0')}</div>
+          <div className="name" style={{color:'#8a8478',fontStyle:'italic',fontWeight:400,fontSize:13}}>— no class —</div>
+          <div className="st"/>
+        </div>
+      );
+      const tc  = todayCounts(records, l.id);
+      const t0  = lectureTime(l,settings).split('–')[0];
+      const stCls = tc.attend>0?'pr':tc.absent>0?'ab':'';
+      const stTxt = tc.attend===0&&tc.absent===0 ? '○ —'
+        : tc.attend>0&&tc.absent>0 ? `● ×${tc.attend} / — ×${tc.absent}`
+        : tc.attend>0 ? `● ×${tc.attend}` : `— ×${tc.absent}`;
+      return (
+        <div key={p} className={'period '+stCls} onClick={()=>onOpen(l.id)}>
+          <div className="pn">{String(p).padStart(2,'0')}</div>
+          <div>
+            <div className="name">{l.name}</div>
+            <div className="meta">{[l.room,l.teacher,t0].filter(Boolean).join('  ·  ')}</div>
+          </div>
+          <div className="st">{stTxt}</div>
+        </div>
+      );
+    })}
+
+    {todayL.length===0 && TODAY_DOW>=1 && TODAY_DOW<=5 && (
+      <div className="ep">講義が登録されていません<a href="lecture.html">＋ 講義を追加</a></div>
+    )}
+    {(TODAY_DOW===0||TODAY_DOW===6) && (
+      <div className="ep">— Today is {DOW_EN[TODAY_DOW]}. No class. —</div>
+    )}
+
+    <div className="footnote">Recorded <em>{done}</em> of <em>{todayL.length}</em> today.<br/>— et cetera.</div>
+  </>);
+}
+
+/* ======== Week ======== */
+function Week({lectures, records, settings, onOpen}) {
+  const mon = new Date(TODAY); mon.setDate(TODAY.getDate()-((TODAY_DOW+6)%7));
+  const fri = new Date(mon);   fri.setDate(mon.getDate()+4);
+  const fmt = d=>`${d.getMonth()+1}/${d.getDate()}`;
+  const wn  = weekNum(settings);
+
+  return (<>
+    <div className="hdr"><span>The Week</span><span>{fmt(TODAY)}</span></div>
+    <div className="week-h">
+      <div>
+        <div className="big">Week.</div>
+        <div style={{fontFamily:'Shippori Mincho,serif',fontWeight:900,fontSize:16,marginTop:6}}>今週</div>
+      </div>
+      <div className="rt">{fmt(mon)} —<br/>{fmt(fri)}<br/><span style={{color:'#d2341e'}}>W{String(wn).padStart(2,'0')}</span></div>
+    </div>
+    {[1,2,3,4,5].map(d=>{
+      const list = lectures.filter(l=>l.dayOfWeek===d).sort((a,b)=>a.period-b.period);
+      return (
+        <div key={d} className={'day-block '+(d===TODAY_DOW?'today':'')}>
+          <div className="hd">
+            <span className="en">{DOW_EN[d]}</span>
+            <span className="jp">{DOW_JP[d]}</span>
+            {d===TODAY_DOW && <span className="tag">◂ TODAY</span>}
+          </div>
+          {list.length
+            ? <div className="wlist">{list.map(l=>{
+                const tc = d===TODAY_DOW ? todayCounts(records,l.id) : null;
+                const st = tc ? (tc.attend>0?'attend':tc.absent>0?'absent':null) : null;
+                return (
+                  <span key={l.id} className={'witem '+(st==='attend'?'done':st==='absent'?'abs':'')} onClick={()=>onOpen(l.id)}>
+                    <span className="wpnum">{String(l.period).padStart(2,'0')}</span>
+                    <span className="wnm">{l.name}</span>
+                  </span>
+                );
+              })}</div>
+            : <div className="wempty">— no lectures —</div>}
+        </div>
+      );
+    })}
+    <div style={{padding:'40px 20px',borderTop:'.5px solid #111'}}/>
+  </>);
+}
+
+/* ======== Detail ======== */
+function Detail({id, lectures, records, settings, onBack, onMark}) {
+  const l = lectures.find(x=>x.id===id);
+  if (!l) return <div className="ep">見つかりません<a onClick={onBack}>← 戻る</a></div>;
+
+  const r      = records.filter(x=>x.lectureId===id);
+  const attend = r.filter(x=>x.status==='attend').length;
+  const absent = r.filter(x=>x.status==='absent').length;
+  const total  = attend+absent;
+  const rate   = total>0 ? Math.round(attend/total*100) : 0;
+  const maxAbs = l.maxAbsences||5;
+  const remain = Math.max(0, maxAbs-absent);
+  const tc0    = todayCounts(records, id);
+  const time   = lectureTime(l, settings);
+  const hist   = [...r].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
+
+  return (<>
+    <div className="back"><b onClick={onBack}>◂ BACK</b><span style={{color:'#8a8478'}}>Entry N°{id.slice(-3).toUpperCase()}</span></div>
+    <div className="d-hero">
+      <div className="sub">{DOW_EN[l.dayOfWeek]} · PERIOD {String(l.period).padStart(2,'0')} · {time}</div>
+      <div className="title">{l.name}</div>
+      {l.teacher && <div className="en">— {l.teacher}</div>}
+    </div>
+    <div className="dstats">
+      <div className="c"><div className="v pr">{String(attend).padStart(2,'0')}</div><div className="lb">Present</div></div>
+      <div className="c"><div className="v">{String(absent).padStart(2,'0')}</div><div className="lb">Absent</div></div>
+      <div className="c"><div className={'v '+(remain>2?'sa':'pr')}>{String(remain).padStart(2,'0')}</div><div className="lb">Can skip</div></div>
+    </div>
+    <div style={{padding:'0 20px 4px',fontFamily:'JetBrains Mono',fontSize:10,color:'#8a8478',letterSpacing:1.5,textTransform:'uppercase'}}>
+      Attendance rate —— <span style={{fontFamily:'Playfair Display',fontStyle:'italic',fontWeight:900,fontSize:18,color:'#d2341e',verticalAlign:-2}}>{rate}%</span>
+    </div>
+    <div className="dmeta">
+      {l.teacher && <div className="r"><div className="k">Prof</div><div className="v2">{l.teacher}</div></div>}
+      {l.room    && <div className="r"><div className="k">Room</div><div className="v2">{l.room}</div></div>}
+      <div className="r"><div className="k">Time</div><div className="v2">{time}</div></div>
+      {l.memo    && <div className="r"><div className="k">Memo</div><div className="v2">{l.memo}</div></div>}
+    </div>
+    <div style={{padding:'18px 20px 4px',fontFamily:'JetBrains Mono',fontSize:10,color:'#8a8478',letterSpacing:2,textTransform:'uppercase'}}>— Today's record</div>
+    <div className="rec-row">
+      <button className="pr" onClick={()=>onMark(id,'attend')}>● Present{tc0.attend>0?` ×${tc0.attend}`:''}</button>
+      <button className="ab" onClick={()=>onMark(id,'absent')}>— Absent{tc0.absent>0?` ×${tc0.absent}`:''}</button>
+    </div>
+    <div className="history">
+      <h4>Past entries</h4>
+      {hist.length===0
+        ? <div style={{fontStyle:'italic',fontSize:12,color:'#8a8478',padding:'8px 0'}}>記録なし</div>
+        : hist.map((h,i)=>(
+          <div key={i} className="h-item">
+            <span className="dt">{h.date.replace(/-/g,' · ')}</span>
+            <span className={'htag '+(h.status==='attend'?'pr':'')}>{h.status==='attend'?'● Present':'— Absent'}</span>
+          </div>
+        ))}
+    </div>
+    <div style={{height:40}}/>
+  </>);
+}
+
+/* ======== Records ======== */
+function Records({lectures, records, settings, onOpen}) {
+  if (!lectures.length) return (
+    <div className="ep">講義が登録されていません<a href="lecture.html">＋ 講義を追加</a></div>
+  );
+  const sorted = [...lectures].sort((a,b)=>{
+    const ra = records.filter(r=>r.lectureId===a.id);
+    const rb = records.filter(r=>r.lectureId===b.id);
+    const pA = ra.length ? ra.filter(r=>r.status==='absent').length/ra.length : 0;
+    const pB = rb.length ? rb.filter(r=>r.status==='absent').length/rb.length : 0;
+    return pA-pB;
+  });
+  return (<>
+    <div className="hdr"><span>Archive</span><span>All Courses</span></div>
+    <div className="rec-h">
+      <div className="big">Log.</div>
+      <div className="sub">{lectures.length} Courses — {settings.semester||'前期'} {TODAY.getFullYear()}</div>
+    </div>
+    {[...sorted].reverse().map(l=>{
+      const r   = records.filter(x=>x.lectureId===l.id);
+      const att = r.filter(x=>x.status==='attend').length;
+      const tot = r.length;
+      const rt  = tot>0 ? Math.round(att/tot*100) : null;
+      const cls = rt===null?'ab':rt>=85?'pr':rt>=70?'wr':'ab';
+      return (
+        <div key={l.id} className="rec-item" onClick={()=>onOpen(l.id)}>
+          <div className="rname">{l.name}</div>
+          <div className="rmeta">{DOW_EN[l.dayOfWeek]} P{l.period}{l.teacher?` · ${l.teacher}`:''}{l.room?` · ${l.room}`:''}</div>
+          <div className="rbar">
+            <div className={'rrate '+cls}>{rt!==null?`${rt}%`:'—'}</div>
+            <div className="rct">{att} / {tot}</div>
+          </div>
+        </div>
+      );
+    })}
+    <div style={{height:30}}/>
+  </>);
+}
+
+/* ======== Pref ======== */
+function Pref({settings, onRefresh}) {
+  const selStyle = {fontFamily:'JetBrains Mono',fontSize:11,color:'#8a8478',background:'transparent',border:'none',borderBottom:'1px solid #8a8478',padding:'2px 4px',outline:'none',cursor:'pointer'};
+  const save = (patch) => { saveSettings(patch); onRefresh(); };
+  const wn = weekNum(settings);
+
+  return (<>
+    <div className="hdr"><span>Preferences</span><span>紙面</span></div>
+    <div className="set-h">
+      <div className="big">Pref.</div>
+      <div style={{fontFamily:'JetBrains Mono',fontSize:10,color:'#8a8478',letterSpacing:2,marginTop:4,textTransform:'uppercase'}}>— Adjust.</div>
+    </div>
+    <div className="set-g">
+      <h3>Current</h3>
+      <div className="set-i">
+        <span className="sk">学年</span>
+        <select value={settings.grade||1} onChange={e=>save({grade:Number(e.target.value)})} style={selStyle}>
+          {[1,2,3,4,5,6].map(n=><option key={n} value={n}>{n}年生</option>)}
+        </select>
+      </div>
+      <div className="set-i">
+        <span className="sk">学期</span>
+        <select value={settings.semester||'前期'} onChange={e=>save({semester:e.target.value})} style={selStyle}>
+          <option value="前期">前期</option>
+          <option value="後期">後期</option>
+        </select>
+      </div>
+      <div className="set-i">
+        <span className="sk">時限数</span>
+        <select value={settings.periodsCount||6} onChange={e=>save({periodsCount:Number(e.target.value)})} style={selStyle}>
+          {[4,5,6,7,8].map(n=><option key={n} value={n}>{n}限</option>)}
+        </select>
+      </div>
+      <div className="set-i">
+        <span className="sk">授業開始日</span>
+        <input type="date" defaultValue={settings.schoolStartDate||''} onChange={e=>save({schoolStartDate:e.target.value})}
+               style={{fontFamily:'JetBrains Mono',fontSize:11,background:'transparent',border:'none',borderBottom:'1px solid #111',padding:'2px 4px',color:'#111',outline:'none'}}/>
+      </div>
+      <div className="set-i"><span className="sk">現在の週</span><span className="sv">第 {wn} 週</span></div>
+    </div>
+    <div className="set-g">
+      <h3>Navigate</h3>
+      <div className="set-i"><span className="sk">詳細設定 · テーマ変更</span><a href="settings.html" className="sl">→ 設定へ</a></div>
+      <div className="set-i"><span className="sk">標準デザインに戻る</span><a className="sl" style={{color:'#8a8478',cursor:'pointer'}} onClick={()=>{try{const c=JSON.parse(localStorage.getItem('tt_settings')||'{}');c.theme='midnight';localStorage.setItem('tt_settings',JSON.stringify(c));}catch{}window.location.href='index.html';}}>→ 切り替え</a></div>
+    </div>
+    <div style={{padding:'24px 20px 40px',textAlign:'center',fontFamily:'Playfair Display',fontStyle:'italic',fontSize:11,color:'#8a8478',lineHeight:1.6}}>
+      {settings.semester==='後期'?'Autumn':'Spring'} {TODAY.getFullYear()}<br/>
+      <span style={{fontFamily:'JetBrains Mono',fontStyle:'normal',letterSpacing:2,fontSize:9}}>— EDITORIAL LEDGER —</span>
+    </div>
+  </>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

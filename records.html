@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0D1117">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="時間割">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>記録一覧</title>
+  <link rel="stylesheet" href="css/variables.css?v=7">
+  <link rel="stylesheet" href="css/base.css?v=5">
+  <link rel="stylesheet" href="css/components.css?v=6">
+  <link rel="stylesheet" href="css/pages.css?v=2">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <h1 class="header-title">記録一覧</h1>
+  </header>
+
+  <!-- コンテンツ -->
+  <main class="page-content">
+    <div class="record-list" id="record-list"></div>
+  </main>
+
+  <!-- ボトムナビ -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item" data-href="index.html">
+      <svg data-lucide="calendar-days" />
+      <span>時間割</span>
+    </a>
+    <a href="records.html" class="bottom-nav-item active" data-href="records.html">
+      <svg data-lucide="clipboard-list" />
+      <span>記録一覧</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item" data-href="settings.html">
+      <svg data-lucide="settings" />
+      <span>設定</span>
+    </a>
+  </nav>
+
+  <script>
+    try {
+      const _s = JSON.parse(localStorage.getItem('tt_settings') || '{}');
+      if (_s.theme === 'shinmen') { window.location.replace('shinmen.html'); }
+      if (_s.theme === 'flyer')   { window.location.replace('flyer.html'); }
+    } catch {}
+  </script>
+  <script src="js/lucide.min.js"></script>
+  <script src="js/storage.js?v=5"></script>
+  <script src="js/app.js?v=12"></script>
+  <script src="js/records.js?v=4"></script>
+  <script>
+    lucide.createIcons();
+    initRecordsPage();
+  </script>
+</body>
+</html>

@@ -208,6 +208,12 @@ function renderForm(lecture) {
 
   const periods = Array.from({ length: 8 }, (_, i) => i + 1);
 
+  // 編集時：現在の記録件数を取得して合計表示値を計算
+  const recAttend = isEdit ? getRecords().filter(r => r.lectureId === lecture.id && r.status === 'attend').length : 0;
+  const recAbsent = isEdit ? getRecords().filter(r => r.lectureId === lecture.id && r.status === 'absent').length : 0;
+  const totalAttend = isEdit ? recAttend + (lecture.attendOffset || 0) : 0;
+  const totalAbsent = isEdit ? recAbsent + (lecture.absentOffset || 0) : 0;
+
   const dayOptions = DAY_OPTIONS.map(d =>
     `<option value="${d.value}" ${lecture?.dayOfWeek === d.value ? 'selected' : ''}>${d.label}</option>`
   ).join('');
@@ -256,6 +262,19 @@ function renderForm(lecture) {
         </div>
       </div>
       <span class="form-hint" style="margin-top:-12px">休める上限未設定の場合は5回として計算します</span>
+      ${isEdit ? `
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">出席数</label>
+          <input class="form-input" id="f-attend" type="number" min="0" max="999" value="${totalAttend}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">欠席数</label>
+          <input class="form-input" id="f-absent" type="number" min="0" max="999" value="${totalAbsent}">
+        </div>
+      </div>
+      <span class="form-hint" style="margin-top:-12px">記録の自動集計値を直接修正できます</span>
+      ` : ''}
       <div class="form-group">
         <label class="form-label">メモ</label>
         <textarea class="form-textarea" id="f-memo" placeholder="任意メモ">${escHtml(lecture?.memo ?? '')}</textarea>
@@ -308,6 +327,14 @@ function saveForm(existingId) {
     maxAbsences:  Number(document.getElementById('f-max-abs').value) || 5,
     memo:         document.getElementById('f-memo').value.trim(),
   };
+
+  if (existingId) {
+    const recs = getRecords().filter(r => r.lectureId === existingId);
+    const recAttend = recs.filter(r => r.status === 'attend').length;
+    const recAbsent = recs.filter(r => r.status === 'absent').length;
+    data.attendOffset = Number(document.getElementById('f-attend').value) - recAttend;
+    data.absentOffset = Number(document.getElementById('f-absent').value) - recAbsent;
+  }
 
   saveLecture(data);
   navigateHome();

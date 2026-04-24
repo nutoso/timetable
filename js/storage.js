@@ -130,12 +130,15 @@ function getCountsByDate(lectureId, date) {
 
 /* ---- 集計 ---- */
 function getAttendanceSummary(lectureId) {
+  const lecture = getLecture(lectureId);
   const records = getRecords().filter(r => r.lectureId === lectureId);
-  const attend = records.filter(r => r.status === 'attend').length;
-  const absent = records.filter(r => r.status === 'absent').length;
+  const recAttend = records.filter(r => r.status === 'attend').length;
+  const recAbsent = records.filter(r => r.status === 'absent').length;
+  const attend = recAttend + (lecture?.attendOffset || 0);
+  const absent = recAbsent + (lecture?.absentOffset || 0);
   const total  = attend + absent;
   const rate   = total > 0 ? Math.round((attend / total) * 100) : null;
-  const sorted = records.sort((a, b) => b.date.localeCompare(a.date));
+  const sorted = [...records].sort((a, b) => b.date.localeCompare(a.date));
   const lastDate = sorted.length > 0 ? sorted[0].date : null;
   return { attend, absent, total, rate, lastDate };
 }
